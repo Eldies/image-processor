@@ -1,0 +1,8 @@
+services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/base:ubuntu
+    restart: always
+    environment:
+      U2NET_HOME: /workspace/.cache/rembg_models
+    volumes:
+      - ../.cache:/workspace/.cache

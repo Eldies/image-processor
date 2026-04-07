@@ -1,7 +1,10 @@
 {
 	"name": "Image Processor devcontainer",
 
-    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "dockerComposeFile": ["docker-compose.yaml"],
+    "service": "devcontainer",
+    "workspaceFolder": "/workspace",
+
     "features": {
         "ghcr.io/devcontainers/features/python:1": {
             "version": "3.14"
@@ -16,7 +19,7 @@
         "8000": { "label": "Backend (FastAPI)" }
     },
 
-    "postCreateCommand": "POETRY_VIRTUALENVS_IN_PROJECT=true poetry install --no-interaction",
+    "postCreateCommand": "bash .devcontainer/post_create.sh",
 
     "customizations" : {
         "jetbrains" : {
@@ -25,7 +28,7 @@
     },
 
     "mounts": [
-        "source=jetbrains_pycharm_config,target=/.jbdevcontainer/config,type=volume"
+        "source=jetbrains_pycharm_config,target=/.jbdevcontainer/config,type=volume",
     ],
 
     "remoteUser": "vscode"

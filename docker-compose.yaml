@@ -1,0 +1,11 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    restart: always
+    environment:
+      U2NET_HOME: /rembg_models
+    volumes:
+      - .cache/rembg_models:/rembg_models
+    ports:
+      - 8000:8000
