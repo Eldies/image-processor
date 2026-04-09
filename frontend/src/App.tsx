@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState, SubmitEvent } from 'react'
+import { ChangeEvent, useEffect, useState, SubmitEvent, DragEvent } from 'react'
 
 export default function App() {
   const [file, setFile] = useState<File | null>(null)
@@ -6,6 +6,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [previewUrl, setPreviewUrl] = useState('')
+  const [_, setIsDragging] = useState(false)
 
   useEffect(() => {
     if (!file) {
@@ -34,6 +35,10 @@ export default function App() {
 
     setError('')
     setResultUrl('')
+
+    if (!file)
+      return;
+
     setIsLoading(true)
 
     const formData = new FormData()
@@ -62,11 +67,27 @@ export default function App() {
     }
   }
 
-  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const nextFile = event.target.files?.[0] || null
+  function setSelectedFile(nextFile: File | null) {
     setFile(nextFile)
     setResultUrl('')
     setError('')
+  }
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const nextFile = event.target.files?.[0] || null
+    setSelectedFile(nextFile)
+  }
+
+  function handleDrop(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault()
+    setIsDragging(false)
+
+    const nextFile = event.dataTransfer?.files?.[0] || null
+
+    if (!nextFile)
+      return
+
+    setSelectedFile(nextFile)
   }
 
   return (
@@ -74,7 +95,16 @@ export default function App() {
       <h1>Background remover</h1>
 
       <form className="card" onSubmit={handleSubmit}>
-        <input type="file" accept="image/*" onChange={handleFileChange} />
+        <label
+            onDragOver={() => setIsDragging(true)}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={handleDrop}
+          >
+
+          <input type="file" accept="image/*" onChange={handleFileChange} />
+          <span>{file ? file.name : 'Drag an image here or click to choose one'}</span>
+        </label>
+
         <button type="submit" disabled={isLoading || !file}>
           Remove background
         </button>
