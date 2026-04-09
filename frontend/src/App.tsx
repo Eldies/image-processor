@@ -68,26 +68,30 @@ export default function App() {
   }
 
   function setSelectedFile(nextFile: File | null) {
-    setFile(nextFile)
     setResultUrl('')
     setError('')
+
+    if (!nextFile) {
+      setFile(null)
+      return
+    }
+
+    if (!nextFile.type.startsWith('image/')) {
+      setError('Please drop an image file')
+      return
+    }
+
+    setFile(nextFile)
   }
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const nextFile = event.target.files?.[0] || null
-    setSelectedFile(nextFile)
+    setSelectedFile(event.target.files?.[0] || null)
   }
 
   function handleDrop(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault()
     setIsDragging(false)
-
-    const nextFile = event.dataTransfer?.files?.[0] || null
-
-    if (!nextFile)
-      return
-
-    setSelectedFile(nextFile)
+    setSelectedFile(event.dataTransfer?.files?.[0] || null)
   }
 
   return (
