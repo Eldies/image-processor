@@ -18,6 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+rembg_session = rembg.new_session("u2netp")
 
 @app.post("/api/v1/remove-bg")
 async def remove_background(file: UploadFile = File(...)) -> StreamingResponse:
@@ -26,6 +27,6 @@ async def remove_background(file: UploadFile = File(...)) -> StreamingResponse:
     image = Image.open(BytesIO(contents))
     image.load()
 
-    output_bytes: bytes = rembg.remove(contents, force_return_bytes=True)
+    output_bytes: bytes = rembg.remove(contents, session=rembg_session, force_return_bytes=True)
 
     return StreamingResponse(BytesIO(output_bytes), media_type="image/png")
