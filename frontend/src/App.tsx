@@ -1,21 +1,21 @@
-import { ChangeEvent, useEffect, useState, SubmitEvent, DragEvent } from 'react'
+import { ChangeEvent, useEffect, useState, DragEvent } from 'react'
 
 export default function App() {
   const [file, setFile] = useState<File | null>(null)
   const [resultUrl, setResultUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [previewUrl, setPreviewUrl] = useState('')
-  const [_, setIsDragging] = useState(false)
+  const [originalUrl, setOriginalUrl] = useState('')
+  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     if (!file) {
-      setPreviewUrl('')
+      setOriginalUrl('')
       return
     }
 
     const url = URL.createObjectURL(file)
-    setPreviewUrl(url)
+    setOriginalUrl(url)
 
     return () => {
       URL.revokeObjectURL(url)
@@ -30,9 +30,7 @@ export default function App() {
     }
   }, [resultUrl])
 
-  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault()
-
+  async function onSubmit() {
     setError('')
     setResultUrl('')
 
@@ -94,46 +92,62 @@ export default function App() {
     setSelectedFile(event.dataTransfer?.files?.[0] || null)
   }
 
+  function onDragOver(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault()
+    setIsDragging(true)
+  }
+
   return (
     <main className="page">
-      <h1>Background remover</h1>
+      <section className="hero">
+        <p className="eyebrow">MVP</p>
+        <h1>Remove image backgrounds in one click</h1>
+        <p className="subtitle">
+          Upload a PNG, JPG, or WebP image. The API removes the background with U2-Net and returns a transparent PNG.
+        </p>
+      </section>
 
-      <form className="card" onSubmit={handleSubmit}>
+      <section className="card uploader-card">
         <label
-            onDragOver={() => setIsDragging(true)}
+            className={`dropzone ${isDragging ? "dropzone-active" : ""}`}
+            onDragOver={onDragOver}
             onDragLeave={() => setIsDragging(false)}
             onDrop={handleDrop}
-          >
-
+        >
           <input type="file" accept="image/*" onChange={handleFileChange} />
-          <span>{file ? file.name : 'Drag an image here or click to choose one'}</span>
+          <span className="dropzone-title">Drag and drop an image here</span>
+          <span className="dropzone-subtitle">or click to choose a file</span>
         </label>
 
-        <button type="submit" disabled={isLoading || !file}>
-          Remove background
-        </button>
-      </form>
-
-      {error && <p className="error">{error}</p>}
-
-      <section className="results">
-        {previewUrl && (
-          <article className="card">
-            <h2>Original</h2>
-            <img src={previewUrl} alt="Original upload" />
-          </article>
-        )}
-
-        {resultUrl && (
-          <article className="card">
-            <h2>Result</h2>
-            <img src={resultUrl} alt="Background removed" />
-            <a href={resultUrl} download="background-removed.png">
+        <div className="actions">
+          <button className="primary-button" onClick={onSubmit} disabled={isLoading || !file}>
+            {isLoading ? 'Removing background...' : 'Remove background'}
+          </button>
+          {resultUrl && (
+            <a className="secondary-button" href={resultUrl} download="image-no-bg.png">
               Download result
             </a>
-          </article>
-        )}
+          )}
+        </div>
+
+        {error && <p className="error-text">{error}</p>}
+      </section>
+
+      <section className="preview-grid">
+        <article className="card preview-card">
+          <h2>Original</h2>
+          {originalUrl ? <img src={originalUrl} alt="Original upload" className="preview-image" /> : <PreviewPlaceholder />}
+        </article>
+
+        <article className="card preview-card">
+          <h2>Background removed</h2>
+          {resultUrl ? <img src={resultUrl} alt="Background removed output" className="preview-image checkerboard" /> : <PreviewPlaceholder />}
+        </article>
       </section>
     </main>
   )
+}
+
+function PreviewPlaceholder() {
+  return <div className="placeholder">Your preview will appear here.</div>
 }
