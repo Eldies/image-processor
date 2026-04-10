@@ -6,7 +6,6 @@ export default function App() {
   const [file, setFile] = useState<File | null>(null)
   const [resultUrl, setResultUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
   const [originalUrl, setOriginalUrl] = useState('')
   const [isDragging, setIsDragging] = useState(false)
 
@@ -33,7 +32,6 @@ export default function App() {
   }, [resultUrl])
 
   async function onSubmit() {
-    setError('')
     setResultUrl('')
 
     if (!file)
@@ -57,11 +55,6 @@ export default function App() {
       const blob = await response.blob()
       const url = URL.createObjectURL(blob)
       setResultUrl(url)
-    } catch (unknownError) {
-      const message =
-        unknownError instanceof Error ? unknownError.message : 'Something went wrong.'
-
-      setError(message)
     } finally {
       setIsLoading(false)
     }
@@ -69,7 +62,6 @@ export default function App() {
 
   function setSelectedFile(nextFile: File | null) {
     setResultUrl('')
-    setError('')
 
     if (!nextFile) {
       setFile(null)
@@ -77,7 +69,7 @@ export default function App() {
     }
 
     if (!nextFile.type.startsWith('image/')) {
-      setError('Please drop an image file')
+//      setError('Please drop an image file')
       return
     }
 

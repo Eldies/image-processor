@@ -118,11 +118,6 @@ h1 {
   background-color: #e2e8f0;
 }
 
-.error-text {
-  color: #fca5a5;
-  margin-top: 16px;
-}
-
 @media (max-width: 800px) {
   .preview-grid {
     grid-template-columns: 1fr;
