@@ -8,6 +8,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [originalUrl, setOriginalUrl] = useState('')
+  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     if (!file) {
@@ -87,23 +88,29 @@ export default function App() {
     setSelectedFile(event.target.files?.[0] || null)
   }
 
-  function handleDrop(event: DragEvent<HTMLLabelElement>) {
+  function onDrop(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault()
+    setIsDragging(false)
     setSelectedFile(event.dataTransfer?.files?.[0] || null)
   }
 
+  function onDragOver(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault()
+    setIsDragging(true)
+  }
+
   return (
-    <main
-        onDrop={handleDrop}
+    <main className="landing-page"
+        onDragOver={onDragOver}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={onDrop}
     >
-      <section className="hero">
+      <section className="landing-content">
         <h1>Remove image backgrounds in one click</h1>
         <p className="subtitle">
           Upload an image. The API removes the background and returns a transparent PNG.
         </p>
-      </section>
 
-      <section className="card uploader-card">
         <label>
           <input ref={inputRef} type="file" accept="image/*" onChange={handleFileChange} hidden/>
           <button
@@ -125,20 +132,20 @@ export default function App() {
           )}
         </div>
 
-        {error && <p className="error-text">{error}</p>}
-      </section>
-
-      <section className="preview-grid">
-        <article className="card preview-card">
+        <article>
           <h2>Original</h2>
-          {originalUrl ? <img src={originalUrl} alt="Original upload" className="preview-image" /> : <PreviewPlaceholder />}
+          {originalUrl ? <img src={originalUrl} alt="Original upload" /> : <PreviewPlaceholder />}
         </article>
 
-        <article className="card preview-card">
+        <article>
           <h2>Background removed</h2>
-          {resultUrl ? <img src={resultUrl} alt="Background removed output" className="preview-image checkerboard" /> : <PreviewPlaceholder />}
+          {resultUrl ? <img src={resultUrl} alt="Background removed output" className="checkerboard" /> : <PreviewPlaceholder />}
         </article>
+
       </section>
+      <div className="file-dropzone" style={isDragging ? {} : {display: 'none'}}>
+        <h1>Drop image anywhere</h1>
+      </div>
     </main>
   )
 }
