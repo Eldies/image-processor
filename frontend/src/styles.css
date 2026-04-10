@@ -33,15 +33,6 @@ a {
   margin-bottom: 28px;
 }
 
-.eyebrow {
-  display: inline-block;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #93c5fd;
-}
-
 h1 {
   margin: 10px 0 12px;
   font-size: clamp(2rem, 4vw, 3.6rem);
@@ -64,37 +55,6 @@ h1 {
 .uploader-card {
   padding: 24px;
   margin-bottom: 24px;
-}
-
-.dropzone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 220px;
-  border: 2px dashed rgba(148, 163, 184, 0.35);
-  border-radius: 20px;
-  cursor: pointer;
-  text-align: center;
-  padding: 24px;
-}
-
-.dropzone input {
-  display: none;
-}
-
-.dropzone-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.dropzone-subtitle {
-  margin-top: 6px;
-  color: #94a3b8;
-}
-
-.dropzone-active {
-  border-color: #ff0000;
 }
 
 .actions {

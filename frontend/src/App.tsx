@@ -1,12 +1,13 @@
-import { ChangeEvent, useEffect, useState, DragEvent } from 'react'
+import {ChangeEvent, useEffect, useState, DragEvent, useRef} from 'react'
 
 export default function App() {
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
   const [file, setFile] = useState<File | null>(null)
   const [resultUrl, setResultUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [originalUrl, setOriginalUrl] = useState('')
-  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     if (!file) {
@@ -88,35 +89,29 @@ export default function App() {
 
   function handleDrop(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault()
-    setIsDragging(false)
     setSelectedFile(event.dataTransfer?.files?.[0] || null)
   }
 
-  function onDragOver(event: DragEvent<HTMLLabelElement>) {
-    event.preventDefault()
-    setIsDragging(true)
-  }
-
   return (
-    <main className="page">
+    <main
+        onDrop={handleDrop}
+    >
       <section className="hero">
-        <p className="eyebrow">MVP</p>
         <h1>Remove image backgrounds in one click</h1>
         <p className="subtitle">
-          Upload a PNG, JPG, or WebP image. The API removes the background with U2-Net and returns a transparent PNG.
+          Upload an image. The API removes the background and returns a transparent PNG.
         </p>
       </section>
 
       <section className="card uploader-card">
-        <label
-            className={`dropzone ${isDragging ? "dropzone-active" : ""}`}
-            onDragOver={onDragOver}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={handleDrop}
-        >
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-          <span className="dropzone-title">Drag and drop an image here</span>
-          <span className="dropzone-subtitle">or click to choose a file</span>
+        <label>
+          <input ref={inputRef} type="file" accept="image/*" onChange={handleFileChange} hidden/>
+          <button
+              className="primary-button"
+              onClick={() => inputRef.current?.click()}
+          >
+            Upload image
+          </button>
         </label>
 
         <div className="actions">
